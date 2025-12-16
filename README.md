@@ -1,32 +1,42 @@
+# DocuGen
 
+DocuGen is a professional document generator that allows you to create and customize documents with ease.
 
+## How to Use
 
-## Run Locally
+To get started with DocuGen, you can clone the repository and run it locally.
 
-**Prerequisites:**  Node.js
+**Prerequisites:** Node.js
 
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/emnextech/DocuGen.git
+   ```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+2. **Navigate to the project directory:**
+   ```bash
+   cd DocuGen
+   ```
 
-## Deploy on Netlify
+3. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-1. **Push to GitHub/GitLab/Bitbucket:**
-   Make sure your project is on a Git repository.
+4. **Run the application:**
+   ```bash
+   npm run dev
+   ```
 
-2. **Create a new site on Netlify:**
-   - Log in to your Netlify account.
-   - Click on "New site from Git".
+## License
 
-3. **Configure the site:**
-   - Choose your Git provider and select your repository.
-   - **Build command:** `npm run build`
-   - **Publish directory:** `dist`
-   - **Environment variables:**
-     - Add a new variable with the key `GEMINI_API_KEY` and set its value to your Gemini API key.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-4. **Deploy:**
-   - Click the "Deploy site" button.
+---
+
+### Connect with me:
+
+*   **GitHub:** [https://github.com/emnextech](https://github.com/emnextech)
+*   **Instagram:** [https://www.instagram.com/emnex31/](https://www.instagram.com/emnex31/)
+*   **Facebook:** [https://web.facebook.com/profile.php?id=61583652779828](https://web.facebook.com/profile.php?id=61583652779828)
+*   **WhatsApp:** +260777274339
