@@ -23,7 +23,7 @@ export enum TemplateCategory {
 export interface FormField {
   key: string;
   label: string;
-  type: 'text' | 'date' | 'number' | 'textarea' | 'items';
+  type: 'text' | 'date' | 'number' | 'textarea' | 'items' | 'image';
   placeholder?: string;
   defaultValue?: any;
 }

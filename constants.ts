@@ -11,8 +11,15 @@ export const TEMPLATES: Template[] = [
     color: 'bg-blue-500',
     thumbnail: 'https://picsum.photos/400/300?grayscale',
     fields: [
-      { key: 'fromName', label: 'From (Your Name/Company)', type: 'text', placeholder: 'Acme Corp' },
-      { key: 'toName', label: 'Bill To (Client Name)', type: 'text', placeholder: 'John Doe' },
+      { key: 'logo', label: 'Company Logo', type: 'image' },
+      { key: 'fromName', label: 'From Name', type: 'text', placeholder: 'Acme Corp' },
+      { key: 'fromEmail', label: 'From Email', type: 'text', placeholder: 'billing@acme.com' },
+      { key: 'fromPhone', label: 'From Phone', type: 'text', placeholder: '(555) 123-4567' },
+      { key: 'fromAddress', label: 'From Address', type: 'textarea', placeholder: '123 Business Rd, Suite 100...' },
+      { key: 'toName', label: 'Bill To Name', type: 'text', placeholder: 'John Doe' },
+      { key: 'toEmail', label: 'Bill To Email', type: 'text', placeholder: 'client@example.com' },
+      { key: 'toPhone', label: 'Bill To Phone', type: 'text', placeholder: '(555) 987-6543' },
+      { key: 'toAddress', label: 'Bill To Address', type: 'textarea', placeholder: '456 Client Lane...' },
       { key: 'invoiceDate', label: 'Invoice Date', type: 'date' },
       { key: 'dueDate', label: 'Due Date', type: 'date' },
       { key: 'invoiceNumber', label: 'Invoice Number', type: 'text', placeholder: 'INV-2024-001' },
@@ -29,8 +36,15 @@ export const TEMPLATES: Template[] = [
     color: 'bg-blue-600',
     thumbnail: 'https://picsum.photos/400/303?grayscale',
     fields: [
+      { key: 'logo', label: 'Company Logo', type: 'image' },
       { key: 'fromName', label: 'Buyer Name', type: 'text', placeholder: 'Your Company' },
+      { key: 'fromEmail', label: 'Buyer Email', type: 'text' },
+      { key: 'fromPhone', label: 'Buyer Phone', type: 'text' },
+      { key: 'fromAddress', label: 'Buyer Address', type: 'textarea' },
       { key: 'toName', label: 'Vendor Name', type: 'text', placeholder: 'Supplier Inc' },
+      { key: 'toEmail', label: 'Vendor Email', type: 'text' },
+      { key: 'toPhone', label: 'Vendor Phone', type: 'text' },
+      { key: 'toAddress', label: 'Vendor Address', type: 'textarea' },
       { key: 'poNumber', label: 'PO Number', type: 'text', placeholder: 'PO-001' },
       { key: 'date', label: 'Date', type: 'date' },
       { key: 'items', label: 'Order Items', type: 'items' },
@@ -46,6 +60,7 @@ export const TEMPLATES: Template[] = [
     color: 'bg-indigo-500',
     thumbnail: 'https://picsum.photos/400/304?grayscale',
     fields: [
+      { key: 'logo', label: 'Company Logo', type: 'image' },
       { key: 'title', label: 'Proposal Title', type: 'text', placeholder: 'Website Redesign' },
       { key: 'clientName', label: 'Client Name', type: 'text' },
       { key: 'preparedBy', label: 'Prepared By', type: 'text' },
@@ -64,6 +79,7 @@ export const TEMPLATES: Template[] = [
     color: 'bg-slate-700',
     thumbnail: 'https://picsum.photos/400/305?grayscale',
     fields: [
+      { key: 'logo', label: 'Company Logo', type: 'image' },
       { key: 'partyA', label: 'Party A (Provider)', type: 'text' },
       { key: 'partyB', label: 'Party B (Client)', type: 'text' },
       { key: 'effectiveDate', label: 'Effective Date', type: 'date' },
@@ -81,6 +97,8 @@ export const TEMPLATES: Template[] = [
     color: 'bg-gray-500',
     thumbnail: 'https://picsum.photos/400/306?grayscale',
     fields: [
+      { key: 'logo', label: 'Organization Logo', type: 'image' },
+      { key: 'organization', label: 'Organization', type: 'text', placeholder: 'Acme Inc.' },
       { key: 'meetingTitle', label: 'Meeting Title', type: 'text' },
       { key: 'date', label: 'Date & Time', type: 'text' },
       { key: 'attendees', label: 'Attendees', type: 'textarea' },
@@ -100,6 +118,7 @@ export const TEMPLATES: Template[] = [
     color: 'bg-teal-600',
     thumbnail: 'https://picsum.photos/400/307?grayscale',
     fields: [
+      { key: 'logo', label: 'Profile Picture / Logo', type: 'image' },
       { key: 'fullName', label: 'Full Name', type: 'text' },
       { key: 'contactInfo', label: 'Contact Info (Email/Phone)', type: 'text' },
       { key: 'summary', label: 'Professional Summary', type: 'textarea' },
@@ -117,6 +136,7 @@ export const TEMPLATES: Template[] = [
     color: 'bg-teal-500',
     thumbnail: 'https://picsum.photos/400/308?grayscale',
     fields: [
+      { key: 'logo', label: 'Header Logo', type: 'image' },
       { key: 'senderName', label: 'Your Name', type: 'text' },
       { key: 'senderContact', label: 'Your Contact Info', type: 'text' },
       { key: 'recipientName', label: 'Hiring Manager Name', type: 'text' },
@@ -133,6 +153,7 @@ export const TEMPLATES: Template[] = [
     color: 'bg-slate-600',
     thumbnail: 'https://picsum.photos/400/301?grayscale',
     fields: [
+      { key: 'logo', label: 'Header Logo', type: 'image' },
       { key: 'senderName', label: 'Sender Name', type: 'text' },
       { key: 'senderAddress', label: 'Sender Address', type: 'text' },
       { key: 'recipientName', label: 'Recipient Name', type: 'text' },
@@ -151,6 +172,7 @@ export const TEMPLATES: Template[] = [
     color: 'bg-emerald-600',
     thumbnail: 'https://picsum.photos/400/302?grayscale',
     fields: [
+      { key: 'logo', label: 'Organization Logo', type: 'image' },
       { key: 'recipientName', label: 'Recipient Name', type: 'text' },
       { key: 'achievementTitle', label: 'Achievement Title', type: 'text' },
       { key: 'description', label: 'Description', type: 'textarea' },
@@ -169,6 +191,8 @@ export const TEMPLATES: Template[] = [
     color: 'bg-orange-500',
     thumbnail: 'https://picsum.photos/400/309?grayscale',
     fields: [
+      { key: 'logo', label: 'Organization Logo', type: 'image' },
+      { key: 'organization', label: 'Organization', type: 'text' },
       { key: 'projectName', label: 'Project Name', type: 'text' },
       { key: 'reportDate', label: 'Report Date', type: 'date' },
       { key: 'status', label: 'Current Status', type: 'text', placeholder: 'On Track / Delayed' },
@@ -186,10 +210,11 @@ export const TEMPLATES: Template[] = [
     color: 'bg-orange-600',
     thumbnail: 'https://picsum.photos/400/310?grayscale',
     fields: [
+      { key: 'logo', label: 'Company Logo', type: 'image' },
       { key: 'employeeName', label: 'Employee Name', type: 'text' },
       { key: 'department', label: 'Department', type: 'text' },
       { key: 'reportDate', label: 'Date', type: 'date' },
-      { key: 'items', label: 'Expenses', type: 'items' }, // Reusing invoice items logic for simplicity
+      { key: 'items', label: 'Expenses', type: 'items' },
       { key: 'notes', label: 'Notes', type: 'textarea' }
     ]
   },
@@ -202,6 +227,8 @@ export const TEMPLATES: Template[] = [
     color: 'bg-orange-700',
     thumbnail: 'https://picsum.photos/400/311?grayscale',
     fields: [
+      { key: 'logo', label: 'Institution Logo', type: 'image' },
+      { key: 'university', label: 'University / Organization', type: 'text' },
       { key: 'title', label: 'Research Title', type: 'text' },
       { key: 'author', label: 'Author', type: 'text' },
       { key: 'abstract', label: 'Abstract', type: 'textarea' },

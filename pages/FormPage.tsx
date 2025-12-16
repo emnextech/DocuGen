@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { TEMPLATES } from '../constants';
 import { Template, InvoiceItem } from '../types';
 import Button from '../components/Button';
-import { Input, TextArea } from '../components/Input';
+import { Input, TextArea, ImageUpload } from '../components/Input';
 import { Trash2, Plus, ArrowRight } from 'lucide-react';
 
 const FormPage: React.FC = () => {
@@ -50,9 +50,12 @@ const FormPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Pass data to preview page via state or context (simple passing via history state here)
+    // Pass data to preview page via state or context
     navigate('/preview', { state: { template, data: formData } });
   };
+
+  // Reusing the same classes as Input component for consistency
+  const inputClasses = "block w-full rounded-md border border-slate-300 bg-white py-2.5 px-3 text-slate-900 placeholder-slate-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm";
 
   if (!template) return <div>Loading...</div>;
 
@@ -61,7 +64,7 @@ const FormPage: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
            <h2 className="text-2xl font-bold text-slate-900">{template.name}</h2>
-           <p className="text-slate-500">Fill in the details below to generate your document.</p>
+           <p className="text-slate-500 mt-1">Fill in the details below to generate your document.</p>
         </div>
       </div>
 
@@ -69,48 +72,73 @@ const FormPage: React.FC = () => {
         {template.fields.map((field) => {
           if (field.type === 'items') {
              return (
-               <div key={field.key} className="space-y-4 pt-4 border-t border-slate-200">
-                 <div className="flex justify-between items-center">
-                   <label className="block text-sm font-bold text-slate-800">Items</label>
+               <div key={field.key} className="space-y-4 pt-6 mt-2 border-t border-slate-100">
+                 <div className="flex justify-between items-center mb-2">
+                   <label className="block text-sm font-semibold text-slate-700">Items List</label>
                  </div>
+                 
+                 {/* Item List Headers - Visible on larger screens */}
+                 <div className="hidden sm:flex gap-3 px-1 mb-1">
+                    <label className="flex-grow text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</label>
+                    <label className="w-24 text-xs font-semibold text-slate-500 uppercase tracking-wider">Quantity</label>
+                    <label className="w-32 text-xs font-semibold text-slate-500 uppercase tracking-wider">Price</label>
+                    <div className="w-10"></div> {/* Spacer for delete button */}
+                 </div>
+
                  {(formData.items || []).map((item: any, idx: number) => (
-                   <div key={idx} className="flex gap-2 items-start">
+                   <div key={idx} className="flex gap-3 items-start">
                      <div className="flex-grow">
+                        <label className="sm:hidden text-xs font-semibold text-slate-500 uppercase mb-1 block">Description</label>
                         <input
                           placeholder="Description"
-                          className="w-full shadow-sm focus:ring-indigo-600 focus:border-indigo-600 sm:text-sm border-slate-400 rounded-md p-2.5 border"
+                          className={inputClasses}
                           value={item.description}
                           onChange={(e) => handleItemChange(idx, 'description', e.target.value)}
                         />
                      </div>
-                     <div className="w-20">
+                     <div className="w-24">
+                        <label className="sm:hidden text-xs font-semibold text-slate-500 uppercase mb-1 block">Qty</label>
                         <input
                           type="number"
                           placeholder="Qty"
-                          className="w-full shadow-sm focus:ring-indigo-600 focus:border-indigo-600 sm:text-sm border-slate-400 rounded-md p-2.5 border"
+                          className={inputClasses}
                           value={item.quantity}
                           onChange={(e) => handleItemChange(idx, 'quantity', Number(e.target.value))}
                         />
                      </div>
-                     <div className="w-24">
+                     <div className="w-32">
+                        <label className="sm:hidden text-xs font-semibold text-slate-500 uppercase mb-1 block">Price</label>
                         <input
                           type="number"
                           placeholder="Price"
-                          className="w-full shadow-sm focus:ring-indigo-600 focus:border-indigo-600 sm:text-sm border-slate-400 rounded-md p-2.5 border"
+                          className={inputClasses}
                           value={item.price}
                           onChange={(e) => handleItemChange(idx, 'price', Number(e.target.value))}
                         />
                      </div>
-                     <button type="button" onClick={() => removeItem(idx)} className="p-2 text-red-500 hover:bg-red-50 rounded-md">
-                       <Trash2 className="w-4 h-4" />
-                     </button>
+                     <div className="pt-0 sm:pt-0 self-end sm:self-center">
+                        <button type="button" onClick={() => removeItem(idx)} className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                     </div>
                    </div>
                  ))}
-                 <Button type="button" variant="outline" size="sm" onClick={addItem}>
+                 <Button type="button" variant="outline" size="sm" onClick={addItem} className="mt-2">
                    <Plus className="w-4 h-4 mr-2" /> Add Item
                  </Button>
                </div>
              )
+          }
+
+          if (field.type === 'image') {
+            return (
+              <ImageUpload
+                key={field.key}
+                label={field.label}
+                value={formData[field.key]}
+                onImageSelect={(base64) => handleInputChange(field.key, base64)}
+              />
+            );
           }
 
           if (field.type === 'textarea') {
@@ -121,7 +149,7 @@ const FormPage: React.FC = () => {
                 placeholder={field.placeholder}
                 value={formData[field.key] || ''}
                 onChange={(e) => handleInputChange(field.key, e.target.value)}
-                required={field.key !== 'notes'} // simplistic validation
+                required={field.key !== 'notes'} 
               />
             );
           }
@@ -139,8 +167,8 @@ const FormPage: React.FC = () => {
           );
         })}
 
-        <div className="pt-6 flex justify-end">
-          <Button type="submit" size="lg" className="w-full sm:w-auto">
+        <div className="pt-8 flex justify-end">
+          <Button type="submit" size="lg" className="w-full sm:w-auto font-semibold shadow-md">
             Preview Document <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>

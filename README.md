@@ -1,42 +1,20 @@
-# DocuGen
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-DocuGen is a professional document generator that allows you to create and customize documents with ease.
+# Run and deploy your AI Studio app
 
-## How to Use
+This contains everything you need to run your app locally.
 
-To get started with DocuGen, you can clone the repository and run it locally.
+View your app in AI Studio: https://ai.studio/apps/drive/1tXvMCb55KqeVmzMJ7hwXAkK_kCzj5GRF
 
-**Prerequisites:** Node.js
+## Run Locally
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/emnextech/DocuGen.git
-   ```
+**Prerequisites:**  Node.js
 
-2. **Navigate to the project directory:**
-   ```bash
-   cd DocuGen
-   ```
 
-3. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-4. **Run the application:**
-   ```bash
-   npm run dev
-   ```
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-### Connect with me:
-
-*   **GitHub:** [https://github.com/emnextech](https://github.com/emnextech)
-*   **Instagram:** [https://www.instagram.com/emnex31/](https://www.instagram.com/emnex31/)
-*   **Facebook:** [https://web.facebook.com/profile.php?id=61583652779828](https://web.facebook.com/profile.php?id=61583652779828)
-*   **WhatsApp:** +260777274339
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

@@ -21,6 +21,17 @@ const writeWrappedText = (doc: jsPDF, text: string, x: number, y: number, maxWid
     return lines.length * lineHeight;
 };
 
+// Helper to guess format
+const getImageFormat = (dataUrl: string) => {
+    try {
+        const result = dataUrl.match(/^data:image\/(\w+);base64,/);
+        if (result && result[1]) {
+            return result[1].toUpperCase();
+        }
+    } catch (e) {}
+    return 'JPEG';
+};
+
 // PDF GENERATION LOGIC
 export const generatePDF = async (template: Template, data: DocumentData): Promise<Blob> => {
   const doc = new jsPDF();
@@ -36,16 +47,40 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
     doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     doc.rect(0, 0, width, 50, 'F');
     
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(26);
-    doc.text(template.name.toUpperCase(), margin, 35);
+    // Determine Title Text (Override name for Invoice)
+    const titleText = template.type === TemplateType.INVOICE ? "INVOICE" : template.name.toUpperCase();
     
-    // Identifier (Top Right)
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    const identifier = data.invoiceNumber || data.poNumber || data.reportDate || 'DRAFT';
-    doc.text(`#${identifier}`, width - margin, 35, { align: 'right' });
+    // Logo & Title Logic
+    if (data.logo) {
+         try {
+             // Logo at Top Left
+             const format = getImageFormat(data.logo);
+             doc.addImage(data.logo, format, margin, 10, 30, 30);
+         } catch (e) { console.warn("Logo error", e); }
+         
+         // Title at Top Right
+         doc.setTextColor(255, 255, 255);
+         doc.setFont('helvetica', 'bold');
+         doc.setFontSize(26);
+         doc.text(titleText, width - margin, 25, { align: 'right' });
+         
+         // Identifier below title
+         doc.setFontSize(12);
+         doc.setFont('helvetica', 'normal');
+         const identifier = data.invoiceNumber || data.poNumber || data.reportDate || 'DRAFT';
+         doc.text(`#${identifier}`, width - margin, 35, { align: 'right' });
+    } else {
+        // No Logo: Standard Left Title
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(26);
+        doc.text(titleText, margin, 35);
+        
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        const identifier = data.invoiceNumber || data.poNumber || data.reportDate || 'DRAFT';
+        doc.text(`#${identifier}`, width - margin, 35, { align: 'right' });
+    }
 
     let currentY = 70;
     doc.setTextColor(0, 0, 0);
@@ -60,11 +95,30 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
     doc.text("FROM:", margin, currentY);
     
     doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     currentY += 6;
     const fromVal = data.fromName || data.employeeName || data.author || '';
     currentY += writeWrappedText(doc, String(fromVal), margin, currentY, colWidth - 10);
+    
+    // Contact Details (Address, Email, Phone)
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(71, 85, 105); // Slate 600
+
+    if (data.fromAddress) {
+        currentY += 1;
+        currentY += writeWrappedText(doc, String(data.fromAddress), margin, currentY, colWidth - 10, 5);
+    }
+    if (data.fromEmail) {
+        currentY += 1;
+        doc.text(String(data.fromEmail), margin, currentY);
+        currentY += 5;
+    }
+    if (data.fromPhone) {
+        doc.text(String(data.fromPhone), margin, currentY);
+        currentY += 5;
+    }
     currentY += 4;
 
     // Right Column (To)
@@ -75,11 +129,30 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
     doc.text("TO:", width / 2 + 10, rightY);
     
     doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     rightY += 6;
     const toVal = data.toName || data.clientName || data.department || '';
-    writeWrappedText(doc, String(toVal), width / 2 + 10, rightY, colWidth - 10);
+    rightY += writeWrappedText(doc, String(toVal), width / 2 + 10, rightY, colWidth - 10);
+    
+    // Recipient Details
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(71, 85, 105);
+
+    if (data.toAddress) {
+        rightY += 1;
+        rightY += writeWrappedText(doc, String(data.toAddress), width / 2 + 10, rightY, colWidth - 10, 5);
+    }
+    if (data.toEmail) {
+        rightY += 1;
+        doc.text(String(data.toEmail), width / 2 + 10, rightY);
+        rightY += 5;
+    }
+    if (data.toPhone) {
+        doc.text(String(data.toPhone), width / 2 + 10, rightY);
+        rightY += 5;
+    }
 
     // Dates Row
     currentY = Math.max(currentY, rightY + 15) + 10;
@@ -151,7 +224,7 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
     doc.text(subtotal.toFixed(2), width - margin - 5, currentY + 9, { align: 'right' });
 
     // Notes
-    const notesField = template.fields.find(f => f.type === 'textarea');
+    const notesField = template.fields.find(f => f.type === 'textarea' && !['fromAddress', 'toAddress'].includes(f.key));
     if (notesField && data[notesField.key]) {
         currentY += 25;
         if (currentY > height - 30) { doc.addPage(); currentY = 20; }
@@ -177,9 +250,18 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
      doc.rect(13, 13, width - 26, height - 26);
 
      let cy = 60;
-     // Icon Placeholder
-     doc.setFillColor(20, 83, 45);
-     doc.circle(width/2, 35, 8, 'F');
+     // Icon Placeholder or Logo
+     if (data.logo) {
+         try {
+            const format = getImageFormat(data.logo);
+            doc.addImage(data.logo, format, width/2 - 15, 20, 30, 30);
+         } catch (e) {
+             console.warn(e);
+         }
+     } else {
+        doc.setFillColor(20, 83, 45);
+        doc.circle(width/2, 35, 8, 'F');
+     }
      
      // Title
      doc.setFont('times', 'bold');
@@ -237,6 +319,14 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
      // --- General Document (Letters, Reports) ---
      let cy = margin + 10;
      
+     if (data.logo) {
+         try {
+             const format = getImageFormat(data.logo);
+             doc.addImage(data.logo, format, margin, margin, 25, 25);
+             cy += 35; // Push content down
+         } catch(e) {}
+     }
+
      // Header Logic
      if (template.type === TemplateType.LETTER || template.type === TemplateType.COVER_LETTER) {
          doc.setFontSize(12);
@@ -252,11 +342,23 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
          doc.line(margin, cy, width-margin, cy);
          cy += 15;
      } else {
+         // Generic Header
          doc.setFont('helvetica', 'bold');
          doc.setFontSize(24);
          doc.setTextColor(0, 0, 0);
          doc.text(template.name, margin, cy);
-         cy += 15;
+         cy += 10;
+         
+         // Subtitle / Organization Name
+         const orgName = data.organization || data.university;
+         if (orgName) {
+             doc.setFontSize(14);
+             doc.setTextColor(100, 100, 100);
+             doc.text(String(orgName).toUpperCase(), margin, cy);
+             cy += 10;
+         }
+
+         cy += 5;
          doc.setDrawColor(0, 0, 0);
          doc.setLineWidth(0.5);
          doc.line(margin, cy, width-margin, cy);
@@ -266,7 +368,13 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
      doc.setTextColor(0,0,0);
      
      template.fields.forEach(field => {
+        // Skip sender fields in body if handled in header
         if (template.type === TemplateType.LETTER && (field.key.includes('sender'))) return;
+        // Skip logo field in body
+        if (field.type === 'image') return;
+        // Skip organization/university if handled in header
+        if (field.key === 'organization' || field.key === 'university') return;
+
         if (cy > height - 30) { doc.addPage(); cy = margin; }
 
         const val = data[field.key];
@@ -309,13 +417,16 @@ export const generatePDF = async (template: Template, data: DocumentData): Promi
 export const generateWord = async (template: Template, data: DocumentData): Promise<Blob> => {
   let sections = [];
 
+  // Determine Title Text (Override name for Invoice)
+  const titleText = template.type === TemplateType.INVOICE ? "INVOICE" : template.name.toUpperCase();
+
   if (TABULAR_TYPES.includes(template.type)) {
      const items: InvoiceItem[] = data.items || [];
      const total = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
 
-     // Header Fields
+     // Header Fields - Allow specific textareas like address to appear in header
      const headerPars = template.fields
-       .filter(f => f.type !== 'items' && f.type !== 'textarea')
+       .filter(f => f.type !== 'items' && f.type !== 'image' && (f.type !== 'textarea' || ['fromAddress', 'toAddress'].includes(f.key)))
        .map(f => new Paragraph({ 
           children: [
             new TextRun({ text: `${f.label}: `, bold: true }),
@@ -325,7 +436,7 @@ export const generateWord = async (template: Template, data: DocumentData): Prom
        }));
     
      const footerPars = template.fields
-       .filter(f => f.type === 'textarea')
+       .filter(f => f.type === 'textarea' && !['fromAddress', 'toAddress'].includes(f.key))
        .flatMap(f => [
           new Paragraph({ text: "" }),
           new Paragraph({ children: [new TextRun({ text: f.label, bold: true, color: "475569" })] }),
@@ -336,7 +447,7 @@ export const generateWord = async (template: Template, data: DocumentData): Prom
          properties: {},
          children: [
              new Paragraph({ 
-               text: template.name.toUpperCase(), 
+               text: titleText, 
                heading: HeadingLevel.HEADING_1, 
                alignment: AlignmentType.RIGHT,
                spacing: { after: 300 }
@@ -399,6 +510,7 @@ export const generateWord = async (template: Template, data: DocumentData): Prom
      const contentPars = template.fields.flatMap(field => {
         const val = data[field.key];
         if (!val) return [];
+        if (field.type === 'image') return [];
 
         if (field.type === 'textarea') {
            const elements = [];

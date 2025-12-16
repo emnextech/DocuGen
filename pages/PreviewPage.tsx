@@ -3,7 +3,7 @@ import { useLocation, useNavigate, Link, useSearchParams } from 'react-router-do
 import { Template, DocumentData } from '../types';
 import { TEMPLATES } from '../constants';
 import Button from '../components/Button';
-import { Download, ArrowLeft, Loader2 } from 'lucide-react';
+import { Download, ArrowLeft, Loader2, ExternalLink } from 'lucide-react';
 import { generatePDF } from '../services/documentGenerator';
 
 // Helper to decode data from URL
@@ -66,7 +66,7 @@ const PreviewPage: React.FC = () => {
         setPdfUrl(url);
       } catch (err) {
         console.error(err);
-        alert("Error generating preview");
+        alert("Error generating preview. Please check console.");
       } finally {
         setIsLoading(false);
       }
@@ -95,6 +95,12 @@ const PreviewPage: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  const handleOpenNewTab = () => {
+    if (pdfUrl) {
+      window.open(pdfUrl, '_blank');
+    }
+  };
+
   if (!template || !data) return (
     <div className="flex justify-center items-center min-h-screen">
       <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
@@ -118,6 +124,12 @@ const PreviewPage: React.FC = () => {
            <h2 className="text-2xl font-bold text-slate-900">Document Preview</h2>
         </div>
         <div className="flex flex-wrap gap-3">
+           {pdfUrl && (
+            <Button onClick={handleOpenNewTab} variant="outline">
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Open in New Tab
+            </Button>
+           )}
           <Button onClick={handleDownload}>
             <Download className="w-4 h-4 mr-2" />
             PDF
@@ -132,12 +144,21 @@ const PreviewPage: React.FC = () => {
             <p>Generating Preview...</p>
           </div>
         ) : (
-          pdfUrl && (
-            <iframe 
-              src={pdfUrl} 
+          pdfUrl ? (
+            <object 
+              data={pdfUrl} 
+              type="application/pdf"
               className="w-full h-[800px] rounded shadow-lg bg-white"
-              title="Document Preview"
-            />
+            >
+              <div className="flex flex-col items-center justify-center h-full text-slate-500 gap-4 p-4 text-center">
+                <p>Unable to display PDF directly in this frame.</p>
+                <Button onClick={handleOpenNewTab} variant="primary">
+                   Open PDF in New Tab
+                </Button>
+              </div>
+            </object>
+          ) : (
+            <div className="text-red-500">Failed to load preview</div>
           )
         )}
       </div>
