@@ -1,12 +1,5 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
-# Run and deploy your AI Studio app
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/drive/1tXvMCb55KqeVmzMJ7hwXAkK_kCzj5GRF
 
 ## Run Locally
 
@@ -18,3 +11,22 @@ View your app in AI Studio: https://ai.studio/apps/drive/1tXvMCb55KqeVmzMJ7hwXAk
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Deploy on Netlify
+
+1. **Push to GitHub/GitLab/Bitbucket:**
+   Make sure your project is on a Git repository.
+
+2. **Create a new site on Netlify:**
+   - Log in to your Netlify account.
+   - Click on "New site from Git".
+
+3. **Configure the site:**
+   - Choose your Git provider and select your repository.
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+   - **Environment variables:**
+     - Add a new variable with the key `GEMINI_API_KEY` and set its value to your Gemini API key.
+
+4. **Deploy:**
+   - Click the "Deploy site" button.
