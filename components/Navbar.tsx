@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
               <div className="bg-indigo-600 p-2 rounded-lg">
                 <FileText className="h-6 w-6 text-white" />
               </div>
-              <span className="font-bold text-xl text-slate-900 tracking-tight">DocuGen</span>
+              <span className="font-bold text-xl text-slate-900 tracking-tight">DocuGen (Beta) </span>
             </Link>
             <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
               <Link to="/" className="border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
